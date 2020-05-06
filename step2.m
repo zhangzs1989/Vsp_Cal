@@ -7,10 +7,10 @@
 %   contact:858488045@qq.com
 %%
 clc;clear;close;fclose('all');
-type = 2;  
-STA = 3;   
+type = 1;  
+STA = 4;
 lev = 1.69;
-xlm = [119,126];ylm=[38,44];%坐标轴显示范围
+xlm = [114,125];ylm=[34,39];%坐标轴显示范围
 
 switch type
     case 1
@@ -112,11 +112,20 @@ for i = 1:mm % 区域
     fidout = fopen(['./outdata/',FileName,'_区域',num2str(i),'.vsp'],'wt');
     for pp = 1:length(vpvs)  % 导出数据
         ymdhms = datestr(time(pp),30);
-        fprintf(fidout,'%s %.3f %.3f%.1f %.1f  %d %.4f\n',...
+        fprintf(fidout,' %s %.2f %.2f%.1f %s%s %.4f\n',...
             [ymdhms(1:8),ymdhms(10:end)],epi_lat(pp),epi_lon(pp),epi_mag(pp),...
-            epi_dep(pp),0,vpvs(pp)); 
+            num2str(floor(epi_dep(pp)),'%04d'),num2str(0,'%03d'),vpvs(pp)); 
     end
-    fclose(fidout);   
+    fclose(fidout);
+    fidout = fopen(['./outdata/',FileName,'_区域',num2str(i),'_lev','.vsp'],'wt');
+    for pp = 1:length(vpvs)  % 导出数据
+        ymdhms = datestr(time(pp),30);
+        if vpvs(pp)<=lev
+        fprintf(fidout,' %s %.4f\n',...
+            [ymdhms(1:8),ymdhms(10:end)],vpvs(pp)); 
+        end
+    end
+    fclose(fidout);
     % 简单统计
     tol = tol + length(vpvs);vsp_lev = vpvs(vpvs<lev); 
     fprintf(fidintro,'%d %d %.2f\n',length(vpvs),length(vsp_lev),length(vsp_lev)*100/length(vpvs));  
@@ -124,17 +133,19 @@ for i = 1:mm % 区域
     if i == mm
         plot(time,vpvs,'.','color',Col(i,:));hold on;plot(time,vpvs,'color',[0.7 0.7 0.7]);hold on
         hm = plot(xlim,[mean(vpvs),mean(vpvs)],'k--');hold on,mvpvs=num2str(mean(vpvs),'%.2f');
-        %     legend(hm,mvpvs,'Location','southeastoutside')
+        title(['mean:',mvpvs,';','lev:',num2str(lev)])
+%         legend(hm,mvpvs,'Location','northoutside','Orientation','horizontal');legend('boxoff')
         plot(xlim,[lev,lev],'r--'),hold on
-        datetick('x','yyyy','keepticks');
+        datetick('x','yyyy','keepticks');set(gca,'xminortick','on')  
         xlabel('year','FontSize',6)
     else
         plot(time,vpvs,'.','color',Col(i,:));hold on;plot(time,vpvs,'color',[0.7 0.7 0.7]);hold on
         hm = plot(xlim,[mean(vpvs),mean(vpvs)],'k--');hold on,mvpvs=num2str(mean(vpvs),'%.2f');
-        %     legend(hm,mvpvs,'Location','southeastoutside')
+%         legend(hm,mvpvs,'Location','northoutside','Orientation','horizontal');legend('boxoff');
         plot(xlim,[lev,lev],'r--');hold on
-        datetick('x','yyyy','keepticks');
+        datetick('x','yyyy','keepticks');set(gca,'xminortick','on')  
         %     set(gca,'xticklabel',[]);
+        title(['mean:',mvpvs,';','lev:',num2str(lev)])
     end
 end
 fprintf(fidintro,'%d',tol);

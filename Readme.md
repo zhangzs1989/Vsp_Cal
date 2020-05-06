@@ -6,9 +6,8 @@
 ## 用法
 - step1.m脚本转换梳理原始观测报告数据
 - step2.m脚本计算过程
-- rd_rpt_jopens.m读取原始观测报告,e.g jopens_report.txt
-- readc2.m读取step1.m产生的数据，./xxxx.out
-- readc1.m新版正式地震观测报告数据,e.g new_report.txt
+- rd_rpt_jopens.m读取原始观测报告
+- readc.m读取step1.m产生的数据
 - figure文件夹（误删），存储图件
 - outdata文件夹(误删)，存储中间结果及最终结果，按config.inp配置的区域
 ## 示例
